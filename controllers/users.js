@@ -49,7 +49,7 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
 
       );
-      res.send({ token }).end();
+      res.send({ token });
     })
     .catch(next);
 };
@@ -79,6 +79,9 @@ module.exports.updateUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError(ERROR_MESSAGE.userExists));
+      }
       if (err.name === ERROR_TYPE.valid || err.name === ERROR_TYPE.cast) {
         return next(new ValidError(ERROR_MESSAGE.notFound));
       }

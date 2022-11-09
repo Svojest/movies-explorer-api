@@ -5,52 +5,18 @@ const ForbiddenError = require('../errors/forbidden');
 const ValidError = require('../errors/valid');
 const { ERROR_TYPE, ERROR_MESSAGE } = require('../constans/errors');
 
-// Get all movies from server
+// Get all saved movies current user
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movie) => {
       res.send(movie);
     })
     .catch(next);
 };
-// Get all saved movies
-module.exports.getSavedMovies = (req, res, next) => {
-  Movie.findById(req.user._id)
-    .then((savedMovies) => {
-      res.send(savedMovies);
-    })
-    .catch(next);
-};
+
 // Create a new movie
 module.exports.createMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-  } = req.body;
-  const owner = req.user._id;
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
-  })
+  Movie.create({ ...req.body, owner: req.user._id })
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === ERROR_TYPE.valid) {
@@ -60,6 +26,7 @@ module.exports.createMovie = (req, res, next) => {
       }
     });
 };
+
 // Delete a movie
 module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
@@ -77,34 +44,3 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch(next);
 };
-
-// // Add movie in saved gallary
-// module.exports.saveMovie = (req, res, next) => {
-//   Movie.findByIdAndUpdate(
-//     req.params.movieId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((movie) => {
-//       if (!movie) {
-//         throw new NotFoundError(ERROR_MESSAGE.notFound);
-//       }
-//       res.send(movie);
-//     })
-//     .catch(next);
-// };
-// // Remove movie from saved gallary
-// module.exports.unsaveMovie = (req, res, next) => {
-//   Movie.findByIdAndUpdate(
-//     req.params.movieId,
-//     { $pull: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((movie) => {
-//       if (!movie) {
-//         throw new NotFoundError(ERROR_MESSAGE.notFound);
-//       }
-//       res.send(movie);
-//     })
-//     .catch(next);
-// };

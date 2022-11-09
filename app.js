@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 
-const routes = require('./routes/index');
+const routes = require('./routes');
 // Middlewares
 const error = require('./middlewares/error');
 const cors = require('./middlewares/cors');
@@ -23,10 +23,9 @@ mongoose.connect(NODE_ENV === 'production' ? DB_NAME : 'mongodb://localhost:2701
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(requestLogger);
 app.use(limiter);
 app.use(helmet());
-
-app.use(requestLogger);
 
 app.use(routes);
 app.use(errorLogger);

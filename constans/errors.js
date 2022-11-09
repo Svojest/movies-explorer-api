@@ -13,6 +13,8 @@ const ERROR_MESSAGE = {
   notFound: 'Not found',
   default: 'Internal server Error',
   unauthorized: 'Invalid username or password',
+  needAuth: 'Please, log in',
+  badToken: 'Invalid token response',
   userExists: 'The user already exists',
   forbidden: 'Its not your card',
 };
